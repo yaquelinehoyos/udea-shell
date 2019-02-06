@@ -45,7 +45,7 @@ int main ()
           }
         }else{
           if(background == 0){ //Cuando no se pide ejecución en segundo plano
-            wait(NULL);
+            waitpid(pid, NULL, 0); 
           }
         }
       }

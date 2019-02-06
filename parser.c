@@ -108,7 +108,7 @@ void identificarDirectorio(char ** items, int background){ //Este es el método 
       execlp("./udea-echo.out", "./udea-echo.out", mensaje, NULL);  //Aquí se crea el nuevo programa
     }else{
       if(background == 0){  //Cuando no se pide ejecución en segundo plano
-        wait(NULL);
+        waitpid(pid, NULL, 0);
       }
     }
     strcpy(mensaje, "");  //limpiamos la variable mensaje
@@ -124,7 +124,7 @@ void identificarDirectorio(char ** items, int background){ //Este es el método 
       execlp(orden, orden, items[1], NULL); //Se crea el nuevo programa
     }else{
       if(background == 0){  //Cuando no se pide ejecución en segundo plano
-        wait(NULL);
+        waitpid(pid, NULL, 0);
       }
     }
   }
