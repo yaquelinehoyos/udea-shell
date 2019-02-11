@@ -9,8 +9,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
+#include <errno.h>
 
 #include "parser.h"
+
+extern int errno;
 
 int separaItems (char * expresion,   // Palabras a separar
                  char *** items,     // Resultado
@@ -88,7 +91,7 @@ void liberaItems (char ** items)
 void identificarDirectorio(char ** items, int background){ //Este es el método para 
                                                            //las ordenes que se debían 
                                                            //implementar manualmente
-  char orden[100] = "./";     //Creamos el nombre del archivo
+  char orden[100] = "/home/yaque/Documentos/Sistemas operativos/udea-shell/";     //Creamos el nombre del archivo
   strcat(orden, items[0]);
   strcat(orden, ".out");
 
@@ -105,13 +108,26 @@ void identificarDirectorio(char ** items, int background){ //Este es el método 
     if(pid < 0){
       printf("Fork falló \n");
     }else if (pid == 0){
-      execlp("./udea-echo.out", "./udea-echo.out", mensaje, NULL);  //Aquí se crea el nuevo programa
+      int auxi = execlp("/home/yaque/Documentos/Sistemas operativos/udea-shell/udea-echo.out", "/home/yaque/Documentos/Sistemas operativos/udea-shell/udea-echo.out", mensaje, NULL);  //Aquí se crea el nuevo programa
+      if(auxi == -1){
+        printf("Error en el llamado: %s \n", strerror(errno));
+        exit(errno);
+      }
     }else{
       if(background == 0){  //Cuando no se pide ejecución en segundo plano
         waitpid(pid, NULL, 0);
       }
     }
     strcpy(mensaje, "");  //limpiamos la variable mensaje
+
+  }else if(strcmp(items[0],"udea-cd") == 0){
+    int dir;
+    dir = chdir(items[1]);
+    if(dir == -1){
+      printf("Error en el cambio de directorio");
+    }else{
+      printf("La nueva ruta es: %s \n", items[1]);
+    }
 
   }else if(strcmp(items[0],"udea-exit") == 0){  //Para terminar el programa
     exit(0);
@@ -121,7 +137,12 @@ void identificarDirectorio(char ** items, int background){ //Este es el método 
     if(pid < 0){
       printf("Fork falló \n");
     }else if (pid == 0){
-      execlp(orden, orden, items[1], NULL); //Se crea el nuevo programa
+      int auxi = execlp(orden, orden, items[1], NULL); //Se crea el nuevo programa
+      if(auxi == -1){
+        printf("Error en el llamado: %s \n", strerror(errno));
+        exit(errno);
+      }
+      strcpy(orden, "");
     }else{
       if(background == 0){  //Cuando no se pide ejecución en segundo plano
         waitpid(pid, NULL, 0);
